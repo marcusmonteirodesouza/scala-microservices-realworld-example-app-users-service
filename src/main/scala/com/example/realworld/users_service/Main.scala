@@ -3,7 +3,10 @@ package com.example.realworld.users_service
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
+import com.example.realworld.users_service.jwt.JwtService
+import com.example.realworld.users_service.users.UsersService
 
+import java.time.Clock
 import scala.compat.java8.DurationConverters.DurationOps
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContextExecutor}
@@ -16,7 +19,17 @@ object Main {
     implicit val executionContext: ExecutionContextExecutor =
       system.executionContext
 
-    val routes = new Routes().routes
+    val usersService = new UsersService()
+
+    implicit val clock: Clock = Clock.systemUTC()
+
+    val jwtService = new JwtService(
+      system.settings.config.getString("server.jwt-issuer"),
+      system.settings.config.getLong("server.jwt-seconds-to-expire"),
+      system.settings.config.getString("server.jwt-secret-key")
+    )
+
+    val routes = new Routes(usersService, jwtService).routes
 
     val serverBinding = Http()
       .newServerAt(system.settings.config.getString("server.host"),
@@ -25,7 +38,7 @@ object Main {
       .map(
         _.addToCoordinatedShutdown(
           system.settings.config
-            .getDuration("server.hardTerminationDeadlineInSeconds")
+            .getDuration("server.hard-termination-deadline-duration-seconds")
             .toScala)
       )
 
