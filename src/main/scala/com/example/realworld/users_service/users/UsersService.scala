@@ -15,9 +15,22 @@ import scala.util.{Failure, Success}
 class UsersService(db: Database)(
     implicit val executionContext: ExecutionContext)
     extends Tables {
+  final private val validEmail =
+    """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
+
   def registerUser(username: String,
                    email: String,
                    password: String): Future[Either[Throwable, User]] = {
+    if (!isValidEmail(email)) {
+      return Future.successful(
+        Left(new IllegalArgumentException("Invalid email")))
+    }
+
+    if (password.length < 8) {
+      return Future.successful(
+        Left(new IllegalArgumentException("Password length must be at least 8")))
+    }
+
     password.bcryptSafeBounded match {
       case Success(passwordHash) =>
         val id = UUID.randomUUID()
@@ -35,6 +48,11 @@ class UsersService(db: Database)(
         }
       case Failure(exception) => Future.successful(Left(exception))
     }
+  }
+
+  private def isValidEmail(email: String) = email match {
+    case validEmail(_, _) => true
+    case _                => false
   }
 }
 

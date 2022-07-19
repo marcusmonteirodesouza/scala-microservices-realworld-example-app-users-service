@@ -64,10 +64,15 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
         complete(
           StatusCodes.UnprocessableEntity,
           ErrorResponse(errors = ErrorResponseErrors(body = Seq(message))))
+      case exception: IllegalArgumentException =>
+        complete(
+          StatusCodes.UnprocessableEntity,
+          ErrorResponse(
+            errors = ErrorResponseErrors(body = Seq(exception.getMessage))))
       case exception =>
         system.log.error("Unexpected exception", exception)
         complete(
-          StatusCodes.UnprocessableEntity,
+          StatusCodes.InternalServerError,
           ErrorResponse(
             errors = ErrorResponseErrors(body = Seq("Internal server error"))))
     }

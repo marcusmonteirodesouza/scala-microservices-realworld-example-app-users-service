@@ -20,7 +20,12 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.3.3",
   "org.slf4j" % "slf4j-nop" % "1.7.36",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
-  "org.postgresql" % "postgresql" % "42.3.6"
+  "org.postgresql" % "postgresql" % "42.3.6",
+  "org.scalactic" %% "scalactic" % "3.2.12",
+  "org.scalatest" %% "scalatest" % "3.2.12" % "test",
+  "com.softwaremill.sttp.client3" %% "core" % "3.7.0" % "test",
+  "com.softwaremill.sttp.client3" %% "spray-json" % "3.7.0" % "test",
+  "io.github.etspaceman" %% "scalacheck-faker" % "7.0.0" % "test",
 )
 
 ThisBuild / assemblyMergeStrategy := {
