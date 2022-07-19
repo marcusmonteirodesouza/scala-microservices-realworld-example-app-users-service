@@ -15,9 +15,6 @@ import scala.util.{Failure, Success}
 class UsersService(db: Database)(
     implicit val executionContext: ExecutionContext)
     extends Tables {
-  final private val validEmail =
-    """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
-
   def registerUser(username: String,
                    email: String,
                    password: String): Future[Either[Throwable, User]] = {
@@ -51,9 +48,14 @@ class UsersService(db: Database)(
     }
   }
 
-  private def isValidEmail(email: String) = email match {
-    case validEmail(_, _) => true
-    case _                => false
+  private def isValidEmail(email: String): Boolean = {
+    val validEmail =
+      """^([a-zA-Z\d.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z\d-]+)*)$""".r
+
+    email match {
+      case validEmail(_, _) => true
+      case _                => false
+    }
   }
 }
 
