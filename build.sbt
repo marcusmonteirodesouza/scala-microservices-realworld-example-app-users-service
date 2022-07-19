@@ -22,3 +22,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
   "org.postgresql" % "postgresql" % "42.3.6"
 )
+
+ThisBuild / assemblyMergeStrategy := {
+  case PathList(ps @ _*) if ps.last endsWith "StaticMDCBinder.class" =>
+    MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "StaticMarkerBinder.class" =>
+    MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "StaticLoggerBinder.class" =>
+    MergeStrategy.first
+  case x =>
+    val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
+    oldStrategy(x)
+}
