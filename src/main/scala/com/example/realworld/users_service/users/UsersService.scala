@@ -28,7 +28,8 @@ class UsersService(db: Database)(
 
     if (password.length < 8) {
       return Future.successful(
-        Left(new IllegalArgumentException("Password length must be at least 8")))
+        Left(
+          new IllegalArgumentException("Password length must be at least 8")))
     }
 
     password.bcryptSafeBounded match {
