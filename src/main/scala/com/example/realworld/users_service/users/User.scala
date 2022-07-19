@@ -1,7 +1,6 @@
 package com.example.realworld.users_service.users
 
-import akka.http.scaladsl.model.DateTime
-
+import java.sql.Timestamp
 import java.util.UUID
 
 final case class User(id: UUID,
@@ -10,5 +9,5 @@ final case class User(id: UUID,
                       passwordHash: String,
                       bio: Option[String],
                       image: Option[String],
-                      createdAt: DateTime,
-                      updatedAt: DateTime)
+                      createdAt: Timestamp,
+                      updatedAt: Timestamp)

@@ -3,7 +3,8 @@ package com.example.realworld.users_service
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route}
+import com.example.realworld.users_service.custom_exceptions.AlreadyExistsException
 import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
 import spray.json.{DefaultJsonProtocol, NullOptions, RootJsonFormat}
@@ -57,6 +58,21 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
     implicit val executionContext: ExecutionContext)
     extends Directives
     with JsonFormats {
+  implicit def customExceptionHandler: ExceptionHandler = {
+    ExceptionHandler {
+      case AlreadyExistsException(message, _) =>
+        complete(
+          StatusCodes.UnprocessableEntity,
+          ErrorResponse(errors = ErrorResponseErrors(body = Seq(message))))
+      case exception =>
+        system.log.error("Unexpected exception", exception)
+        complete(
+          StatusCodes.UnprocessableEntity,
+          ErrorResponse(
+            errors = ErrorResponseErrors(body = Seq("Internal server error"))))
+    }
+  }
+
   val routes: Route = Route.seal(concat({
     pathPrefix("users") {
       pathEndOrSingleSlash {
@@ -79,10 +95,13 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
                                                        request.user.email,
                                                        request.user.password)
 
-    registerUserFuture.map { user =>
-      system.log.info("User {} registered!", user.id)
-      val token = jwtService.generateToken(user)
-      UserDto.fromUserAndToken(user, token)
+    registerUserFuture.map {
+      case Right(user) =>
+        system.log.info("User {} registered!", user.id)
+        val token = jwtService.generateToken(user)
+        UserDto.fromUserAndToken(user, token)
+      case Left(exception) =>
+        throw exception
     }
   }
 }

@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
+import slick.jdbc.JdbcBackend.Database
 
 import java.time.Clock
 import scala.compat.java8.DurationConverters.DurationOps
@@ -19,7 +20,9 @@ object Main {
     implicit val executionContext: ExecutionContextExecutor =
       system.executionContext
 
-    val usersService = new UsersService()
+    val db = Database.forConfig("db")
+
+    val usersService = new UsersService(db)
 
     implicit val clock: Clock = Clock.systemUTC()
 
