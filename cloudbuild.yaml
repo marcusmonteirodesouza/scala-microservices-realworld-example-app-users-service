@@ -3,3 +3,7 @@ steps:
     args: [ 'build', '-t', '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}', '.' ]
 images:
   - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}'
+artifacts:
+  objects:
+    location: '${_INITDB_BUCKET}'
+    paths: ['initdb/*']
