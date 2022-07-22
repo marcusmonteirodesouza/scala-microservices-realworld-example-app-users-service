@@ -102,6 +102,7 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
 
     registerUserFuture.map {
       case Right(user) =>
+        system.log.info("HEY!!!!! I'm a modification!")
         system.log.info("User {} registered!", user.id)
         val token = jwtService.generateToken(user)
         UserDto.fromUserAndToken(user, token)
