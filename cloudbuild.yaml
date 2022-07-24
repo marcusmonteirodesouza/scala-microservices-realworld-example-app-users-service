@@ -6,4 +6,4 @@ images:
 artifacts:
   objects:
     location: '${_INITDB_BUCKET}'
-    paths: ['initdb/*']
+    paths: ['initdb/initdb.sql']
