@@ -78,19 +78,29 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
     }
   }
 
-  val routes: Route = Route.seal(concat({
-    pathPrefix("users") {
-      pathEndOrSingleSlash {
-        post {
-          entity(as[RegisterUserRequest]) { request =>
-            onSuccess(registerUser(request)) { response =>
-              complete(StatusCodes.Created, response)
+  val routes: Route = Route.seal(
+    concat(
+      {
+        pathPrefix("users") {
+          pathEndOrSingleSlash {
+            post {
+              entity(as[RegisterUserRequest]) { request =>
+                onSuccess(registerUser(request)) { response =>
+                  complete(StatusCodes.Created, response)
+                }
+              }
             }
           }
         }
+      },
+      pathPrefix("healthcheck") {
+        pathEndOrSingleSlash {
+          get {
+            complete(StatusCodes.OK)
+          }
+        }
       }
-    }
-  }))
+    ))
 
   private def registerUser(request: RegisterUserRequest): Future[UserDto] = {
     system.log.info("Registering user with username {}, email {}...",
@@ -102,7 +112,6 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
 
     registerUserFuture.map {
       case Right(user) =>
-        system.log.info("HEY!!!!! I'm a modification!")
         system.log.info("User {} registered!", user.id)
         val token = jwtService.generateToken(user)
         UserDto.fromUserAndToken(user, token)
