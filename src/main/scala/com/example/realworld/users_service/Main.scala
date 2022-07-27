@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
+import healthcheck.HealthCheckService
 import slick.jdbc.JdbcBackend.Database
 
 import java.time.Clock
@@ -32,7 +33,9 @@ object Main {
       system.settings.config.getString("server.jwt-secret-key")
     )
 
-    val routes = new Routes(usersService, jwtService).routes
+    val healthCheckService = new HealthCheckService(db)
+
+    val routes = new Routes(usersService, jwtService, healthCheckService).routes
 
     val serverBinding = Http()
       .newServerAt(system.settings.config.getString("server.host"),

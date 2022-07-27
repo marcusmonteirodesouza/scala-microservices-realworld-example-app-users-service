@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route}
 import com.example.realworld.users_service.custom_exceptions.AlreadyExistsException
 import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
+import healthcheck.HealthCheckService
 import spray.json.{DefaultJsonProtocol, NullOptions, RootJsonFormat}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +54,9 @@ trait JsonFormats
     ErrorResponse)
 }
 
-class Routes(usersService: UsersService, jwtService: JwtService)(
+class Routes(usersService: UsersService,
+             jwtService: JwtService,
+             healthCheckService: HealthCheckService)(
     implicit val system: ActorSystem[_],
     implicit val executionContext: ExecutionContext)
     extends Directives
@@ -96,7 +99,9 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
       pathPrefix("healthcheck") {
         pathEndOrSingleSlash {
           get {
-            complete(StatusCodes.OK)
+            onSuccess(healthCheck()) {
+              complete(StatusCodes.OK)
+            }
           }
         }
       }
@@ -117,6 +122,13 @@ class Routes(usersService: UsersService, jwtService: JwtService)(
         UserDto.fromUserAndToken(user, token)
       case Left(exception) =>
         throw exception
+    }
+  }
+
+  private def healthCheck(): Future[Unit] = {
+    healthCheckService.healthCheck().map {
+      case Right(_)        => Future.successful()
+      case Left(exception) => throw exception
     }
   }
 }
