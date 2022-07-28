@@ -17,10 +17,8 @@ object UsersClient extends JsonFormats {
   val backend: SttpBackend[Identity, Any] = HttpClientSyncBackend()
 
   def healthCheck(): Identity[Response[Either[String, String]]] = {
-    val url = s"$baseUrl/healthcheck"
-
     val request = basicRequest
-      .get(uri"$url")
+      .get(uri"$baseUrl")
 
     request.send(backend)
   }

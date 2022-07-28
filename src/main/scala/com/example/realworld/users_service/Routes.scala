@@ -96,12 +96,10 @@ class Routes(usersService: UsersService,
           }
         }
       },
-      pathPrefix("healthcheck") {
-        pathEndOrSingleSlash {
-          get {
-            onSuccess(healthCheck()) {
-              complete(StatusCodes.OK)
-            }
+      pathEndOrSingleSlash {
+        get {
+          onSuccess(healthCheck()) {
+            complete(StatusCodes.OK)
           }
         }
       }
