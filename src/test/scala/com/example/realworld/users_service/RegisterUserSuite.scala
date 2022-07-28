@@ -27,7 +27,7 @@ class RegisterUserSuite extends AnyFunSuite {
     }
   }
 
-  test("Given username already exists should return an error") {
+  test("Given username already exists should return UnprocessableEntity") {
     val username = Faker.default.userName()
     val email = Faker.default.emailAddress()
     val password = Faker.default.password()
@@ -52,7 +52,7 @@ class RegisterUserSuite extends AnyFunSuite {
     }
   }
 
-  test("Given email already exists should return an error") {
+  test("Given email already exists should return UnprocessableEntity") {
     val username = Faker.default.userName()
     val email = Faker.default.emailAddress()
     val password = Faker.default.password()
@@ -77,7 +77,7 @@ class RegisterUserSuite extends AnyFunSuite {
     }
   }
 
-  test("Given invalid email should return an error") {
+  test("Given invalid email should return UnprocessableEntity") {
     val username = Faker.default.userName()
     val email = "invalid"
     val password = Faker.default.password()
@@ -95,7 +95,7 @@ class RegisterUserSuite extends AnyFunSuite {
     }
   }
 
-  test("Given password is too short should return an error") {
+  test("Given password is too short should return UnprocessableEntity") {
     val username = Faker.default.userName()
     val email = Faker.default.emailAddress()
     val password = "1234567"

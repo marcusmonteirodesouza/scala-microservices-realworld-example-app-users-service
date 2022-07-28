@@ -37,4 +37,18 @@ object UsersClient extends JsonFormats {
 
     request.send(backend)
   }
+
+  def login(email: String, password: String): Identity[
+    Response[Either[ResponseException[ErrorResponse, Exception], UserDto]]] = {
+    val url = s"$baseUrl/users/login"
+
+    val body = LoginRequest(LoginRequestUser(email, password))
+
+    val request = basicRequest
+      .post(uri"$url")
+      .body(body)
+      .response(asJsonEither[ErrorResponse, UserDto])
+
+    request.send(backend)
+  }
 }
