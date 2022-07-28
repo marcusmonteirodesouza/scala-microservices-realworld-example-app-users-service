@@ -3,9 +3,9 @@ package com.example.realworld.users_service
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
+import com.example.realworld.users_service.healthcheck.HealthCheckService
 import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
-import healthcheck.HealthCheckService
 import slick.jdbc.JdbcBackend.Database
 
 import java.time.Clock

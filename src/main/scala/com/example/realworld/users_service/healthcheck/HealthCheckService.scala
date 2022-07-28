@@ -1,4 +1,4 @@
-package healthcheck
+package com.example.realworld.users_service.healthcheck
 
 import slick.jdbc.GetResult
 import slick.jdbc.PostgresProfile.api._
