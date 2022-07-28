@@ -1,6 +1,9 @@
 package com.example.realworld.users_service.users
 
-import com.example.realworld.users_service.custom_exceptions.AlreadyExistsException
+import com.example.realworld.users_service.custom_exceptions.{
+  AlreadyExistsException,
+  NotFoundException
+}
 import com.github.t3hnar.bcrypt._
 import org.postgresql.util.PSQLException
 import slick.jdbc.JdbcBackend.Database
@@ -45,6 +48,31 @@ class UsersService(db: Database)(
 
         }
       case Failure(exception) => Future.successful(Left(exception))
+    }
+  }
+
+  def getUserByEmail(email: String): Future[Either[Throwable, User]] = {
+    val getUserByEmailAction =
+      users.filter(_.email === email).take(1).result.headOption
+    db.run(getUserByEmailAction.asTry).map {
+      case Success(result) =>
+        result match {
+          case Some(user) => Right(user)
+          case None       => Left(NotFoundException("User not found"))
+        }
+      case Failure(exception) => Left(exception)
+    }
+  }
+
+  def verifyPassword(email: String,
+                     password: String): Future[Either[Throwable, Boolean]] = {
+    getUserByEmail(email).map {
+      case Right(user) =>
+        password.isBcryptedSafeBounded(user.passwordHash) match {
+          case Success(isPasswordMatch) => Right(isPasswordMatch)
+          case Failure(exception)       => Left(exception)
+        }
+      case Left(exception) => Left(exception)
     }
   }
 
