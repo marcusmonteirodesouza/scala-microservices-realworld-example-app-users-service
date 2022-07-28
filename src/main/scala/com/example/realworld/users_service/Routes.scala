@@ -85,7 +85,9 @@ class Routes(usersService: UsersService,
             errors = ErrorResponseErrors(body = Seq(exception.getMessage))))
       case exception: UnauthorizedException =>
         system.log.error("Unauthorized exception", exception)
-        complete(StatusCodes.Unauthorized)
+        complete(StatusCodes.Unauthorized,
+                 ErrorResponse(
+                   errors = ErrorResponseErrors(body = Seq("Unauthorized"))))
       case exception =>
         system.log.error("Unexpected exception", exception)
         complete(
