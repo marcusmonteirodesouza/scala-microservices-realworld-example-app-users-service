@@ -35,6 +35,8 @@ ThisBuild / assemblyMergeStrategy := {
     MergeStrategy.first
   case PathList(ps @ _*) if ps.last endsWith "StaticLoggerBinder.class" =>
     MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "module-info.class" =>
+    MergeStrategy.discard
   case x =>
     val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
     oldStrategy(x)

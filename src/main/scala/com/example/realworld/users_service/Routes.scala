@@ -192,7 +192,7 @@ class Routes(usersService: UsersService,
 
   private def authenticator(credentials: Credentials): Future[Option[User]] =
     credentials match {
-      case _ @Credentials.Provided(token) =>
+      case Credentials.Provided(token) =>
         jwtService.decodeToken(token) match {
           case Right(email) =>
             usersService.getUserByEmail(email).map {
