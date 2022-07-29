@@ -8,7 +8,6 @@ import com.example.realworld.users_service.jwt.JwtService
 import com.example.realworld.users_service.users.UsersService
 import slick.jdbc.JdbcBackend.Database
 
-import java.time.Clock
 import scala.compat.java8.DurationConverters.DurationOps
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContextExecutor}
@@ -25,14 +24,10 @@ object Main {
 
     val usersService = new UsersService(db)
 
-    implicit val clock: Clock = Clock.systemUTC()
-
     val jwtService = new JwtService(
       system.settings.config.getString("server.jwt-issuer"),
       system.settings.config.getLong("server.jwt-seconds-to-expire"),
-      system.settings.config.getString("server.jwt-secret-key"),
-      usersService
-    )
+      system.settings.config.getString("server.jwt-secret-key"))
 
     val healthCheckService = new HealthCheckService(db)
 

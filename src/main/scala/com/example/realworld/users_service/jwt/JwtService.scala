@@ -2,18 +2,13 @@ package com.example.realworld.users_service.jwt
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.realworld.users_service.users.UsersService
 
-import java.time.{Clock, Instant}
-import scala.concurrent.ExecutionContext
+import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 class JwtService(val jwtIssuer: String,
                  jwtSecondsToExpire: Long,
-                 jwtSecretKey: String,
-                 usersService: UsersService)(
-    implicit val clock: Clock,
-    val executionContext: ExecutionContext) {
+                 jwtSecretKey: String) {
   val algorithm: Algorithm = Algorithm.HMAC256(jwtSecretKey)
 
   def generateToken(email: String): String = {
