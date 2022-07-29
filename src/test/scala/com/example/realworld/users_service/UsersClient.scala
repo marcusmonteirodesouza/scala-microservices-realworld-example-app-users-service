@@ -16,13 +16,6 @@ object UsersClient extends JsonFormats {
 
   val backend: SttpBackend[Identity, Any] = HttpClientSyncBackend()
 
-  def healthCheck(): Identity[Response[Either[String, String]]] = {
-    val request = basicRequest
-      .get(uri"$baseUrl")
-
-    request.send(backend)
-  }
-
   def registerUser(username: String, email: String, password: String): Identity[
     Response[Either[ResponseException[ErrorResponse, Exception], UserDto]]] = {
     val url = s"$baseUrl/users"
@@ -48,6 +41,29 @@ object UsersClient extends JsonFormats {
       .post(uri"$url")
       .body(body)
       .response(asJsonEither[ErrorResponse, UserDto])
+
+    request.send(backend)
+  }
+
+  def getCurrentUser(maybeToken: Option[String]): Identity[
+    Response[Either[ResponseException[ErrorResponse, Exception], UserDto]]] = {
+    val url = s"$baseUrl/user"
+
+    var request =
+      basicRequest.get(uri"$url").response(asJsonEither[ErrorResponse, UserDto])
+
+    maybeToken match {
+      case Some(token) =>
+        request = request.auth.bearer(token)
+      case None =>
+    }
+
+    request.send(backend)
+  }
+
+  def healthCheck(): Identity[Response[Either[String, String]]] = {
+    val request = basicRequest
+      .get(uri"$baseUrl")
 
     request.send(backend)
   }
