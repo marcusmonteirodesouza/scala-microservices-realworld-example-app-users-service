@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
   "ch.qos.logback" % "logback-classic" % "1.2.11",
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0",
-  "com.github.jwt-scala" %% "jwt-core" % "9.0.5",
+  "com.auth0" % "java-jwt" % "4.0.0",
   "com.typesafe.slick" %% "slick" % "3.3.3",
   "org.slf4j" % "slf4j-nop" % "1.7.36",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",

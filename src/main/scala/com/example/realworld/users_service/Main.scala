@@ -30,7 +30,8 @@ object Main {
     val jwtService = new JwtService(
       system.settings.config.getString("server.jwt-issuer"),
       system.settings.config.getLong("server.jwt-seconds-to-expire"),
-      system.settings.config.getString("server.jwt-secret-key")
+      system.settings.config.getString("server.jwt-secret-key"),
+      usersService
     )
 
     val healthCheckService = new HealthCheckService(db)
